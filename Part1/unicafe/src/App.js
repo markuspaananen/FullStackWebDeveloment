@@ -10,6 +10,16 @@ const Statistics = ({good,bad,neutral}) => {
   return(
     <div>
       <div>
+        good {good}
+      </div>
+      <div>
+        neutral {neutral}
+      </div>
+      <div>
+        bad {bad}
+      </div>
+
+      <div>
         all {all}
       </div>
       <div>
@@ -19,6 +29,15 @@ const Statistics = ({good,bad,neutral}) => {
         positive {positive}
       </div>
     </div>
+  )
+}
+
+const Text = () => {
+  return (
+    <div>
+      <p>No feedback given</p>
+    </div>
+    
   )
 }
 
@@ -40,18 +59,10 @@ function App() {
       <button onClick={() => setBad(bad + 1)}>
         bad
       </button>
-      <h1>statistics</h1>
+
+      <h1>statistics</h1>      
       <div>
-        good {good}
-      </div>
-      <div>
-        neutral {neutral}
-      </div>
-      <div>
-        bad {bad}
-      </div>
-      <div>
-        <Statistics good={good} bad={bad} neutral={neutral}/>
+        {((!(!good && !neutral && !bad)) && <Statistics good={good} bad={bad} neutral={neutral}/>) || <Text/>  }
       </div>
     </div>
   )
