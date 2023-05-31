@@ -3,12 +3,26 @@ import { useState } from 'react'
 function getRandom(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+//return the index of max value
+function IndexOfBiggestNum(a) {
+  const IndexMaxValue = a.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+  return IndexMaxValue;
+}
 //Button
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
 )
+const MaxValue = ({anecdotes, array}) => {
+  return(
+    <div>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[IndexOfBiggestNum(array)]}</p>
+      <p>has {array[IndexOfBiggestNum(array)]} votes</p>
+    </div>
+  )
+}
 const App = () => {
     const anecdotes = [
     'If it hurts, do it more often.',
@@ -24,27 +38,32 @@ const App = () => {
   const [VotesValues, setVotesValues] = useState(new Array(anecdotes.length).fill(0));
 
   const handleAnecdoteClick = () => {
+    //may repeat number but that shuold be ok
     setSelected(getRandom(0, 7))
   }
   const handleVoteClick = () => {
     const copy = [ ...VotesValues ]
-   console.log("soif",copy[selected])
     // increment the property 2 value by one
     copy[selected] = copy[selected] + 1;
     setVotesValues(copy);
   }
-
   return (
     <div>
+      <div>
+        <h1>Anecdote of the day</h1>
+      </div>
       <div>
         {anecdotes[selected]}
       </div>
       <div>
         Has {VotesValues[selected]} votes
       </div>
-      <div>
-        <Button handleClick={handleAnecdoteClick} text="anecdotes" />
+      <div>  
         <Button handleClick={handleVoteClick} text="Vote" />
+        <Button handleClick={handleAnecdoteClick} text="Next anecdote" />
+      </div>
+      <div>
+        <MaxValue anecdotes={anecdotes} array={VotesValues}/>
       </div>
     </div>
   )
