@@ -10,7 +10,7 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 const App = () => {
-  const anecdotes = [
+    const anecdotes = [
     'If it hurts, do it more often.',
     'Adding manpower to a late software project makes it later!',
     'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
@@ -20,19 +20,31 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-  const handleClick = () => {
-    setSelected(getRandom(0,7))
-       
+  const [selected, setSelected] = useState(0);
+  const [VotesValues, setVotesValues] = useState(new Array(anecdotes.length).fill(0));
+
+  const handleAnecdoteClick = () => {
+    setSelected(getRandom(0, 7))
   }
-  const [selected, setSelected] = useState(0)
-  console.log(selected);
+  const handleVoteClick = () => {
+    const copy = [ ...VotesValues ]
+   console.log("soif",copy[selected])
+    // increment the property 2 value by one
+    copy[selected] = copy[selected] + 1;
+    setVotesValues(copy);
+  }
+
   return (
     <div>
       <div>
         {anecdotes[selected]}
       </div>
       <div>
-        <Button handleClick={handleClick} text="anecdotes" />
+        Has {VotesValues[selected]} votes
+      </div>
+      <div>
+        <Button handleClick={handleAnecdoteClick} text="anecdotes" />
+        <Button handleClick={handleVoteClick} text="Vote" />
       </div>
     </div>
   )
