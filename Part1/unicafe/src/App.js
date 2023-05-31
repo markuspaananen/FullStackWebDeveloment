@@ -89,7 +89,7 @@ const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>
     {text}
   </button>
-)
+)//App
 function App() {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
