@@ -2,7 +2,9 @@ const Header = ({ course }) => <h1>{course}</h1>;
 
 const Total = ({ parts }) => {
   const totalExercises =
-    parts.reduce((sum, part) => sum + part.exercises, 0);
+    parts.reduce(function (sum, part) {
+      return sum + part.exercises;
+    }, 0);
   return (
     <div>
       <p>Total of {totalExercises} exercises</p>
