@@ -1,5 +1,7 @@
 // Import Statement
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react'
+import React from 'react'
+import axios from 'axios'
 
 // Functions
 const Filter = (props) => {
@@ -42,10 +44,23 @@ const Persons = (props) => {
 const App = (props) => {
 
   // State Variables
-  const [persons, setPersons] = useState(props.person || []);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+
+
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'notes')
+
 
   // Event handlers
   const addName = (event) => {
