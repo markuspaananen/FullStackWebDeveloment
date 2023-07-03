@@ -29,6 +29,7 @@ const PersonForm = (props) => {
     </form>
   );
 }
+/*
 const Persons = (props) => {
   return (
     <ul>
@@ -40,6 +41,19 @@ const Persons = (props) => {
     </ul>
   )
 }
+*/
+const Persons = (props) => {
+  return (
+    <ul>
+      {props.persons.filter((person) =>
+        person && person.name && person.name.toLowerCase().includes(props.filter.toLowerCase()))
+        .map((person) => (
+          <li key={person.id}>{person.name} {person.number}</li>
+        ))}
+    </ul>
+  );
+};
+
 // Functional Component App
 const App = (props) => {
 
@@ -49,8 +63,16 @@ const App = (props) => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
 
-
-  useEffect(() => {
+  /*
+    useEffect(() => {
+      axios
+        .get('http://localhost:3001/persons')
+        .then(response => {
+          setPersons(response.data)
+        })
+    }, [])
+  */
+  const hook = () => {
     console.log('effect')
     axios
       .get('http://localhost:3001/persons')
@@ -58,8 +80,9 @@ const App = (props) => {
         console.log('promise fulfilled')
         setPersons(response.data)
       })
-  }, [])
-  console.log('render', persons.length, 'notes')
+  }
+  useEffect(hook, [])
+
 
 
   // Event handlers
@@ -74,11 +97,20 @@ const App = (props) => {
         number: newNumber,
         id: persons.length + 1,
       }
-      setPersons(persons.concat(nameObject))
-      setNewName('')
-      setNewNumber('')
+
+      axios
+        .post('http://localhost:3001/Persons', nameObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   };
+
+
+
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
