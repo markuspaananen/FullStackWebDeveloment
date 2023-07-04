@@ -1,7 +1,7 @@
 // Import Statement
 import { useState, useEffect } from 'react'
 import React from 'react'
-import axios from 'axios'
+import noteService from './services/persons'
 
 // Functions
 const Filter = (props) => {
@@ -29,19 +29,6 @@ const PersonForm = (props) => {
     </form>
   );
 }
-/*
-const Persons = (props) => {
-  return (
-    <ul>
-      {props.persons.filter((person) =>
-        person.name.toLowerCase().includes(props.filter.toLowerCase()))
-        .map((person) => (
-          <li key={person.id}>{person.name} {person.number}</li>
-        ))}
-    </ul>
-  )
-}
-*/
 const Persons = (props) => {
   return (
     <ul>
@@ -63,27 +50,14 @@ const App = (props) => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
 
-  /*
+
     useEffect(() => {
-      axios
-        .get('http://localhost:3001/persons')
+      noteService
+        .getAll()
         .then(response => {
           setPersons(response.data)
         })
     }, [])
-  */
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }
-  useEffect(hook, [])
-
-
 
   // Event handlers
   const addName = (event) => {
@@ -98,8 +72,8 @@ const App = (props) => {
         id: persons.length + 1,
       }
 
-      axios
-        .post('http://localhost:3001/Persons', nameObject)
+      noteService
+        .create(nameObject)
         .then(response => {
           setPersons(persons.concat(response.data))
           setNewName('')
@@ -107,11 +81,6 @@ const App = (props) => {
         })
     }
   };
-
-
-
-
-
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   };
