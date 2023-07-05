@@ -176,7 +176,7 @@ const App = (props) => {
   return (
     <div>
       <h2>Phonebook</h2>
-
+      <ErrorNotification message={errorMessage} />
       <Notification message={succsessMessage} />
       <Filter
         filter={filter} handleFilterChange={handleFilterChange}
