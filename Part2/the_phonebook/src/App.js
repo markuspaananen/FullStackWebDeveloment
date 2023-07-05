@@ -39,11 +39,11 @@ const Persons = (props) => {
           <li
             key={person.id}>{person.name} {person.number}
             <button onClick={() => {
-              if(window.confirm(`Delete ${person.name}`)){
+              if (window.confirm(`Delete ${person.name}`)) {
                 props.handleDeleteContact(person.id)
               }
             }}
-              >Delete</button>
+            >Delete</button>
           </li>
         ))}
     </ul>
@@ -67,11 +67,25 @@ const App = (props) => {
         setPersons(initalPerson)
       })
   }, [])
-
+  
   const addName = (event) => {
     event.preventDefault()
     if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const personToUpdate = persons.find(person => person.name === newName);
+        const updatedPerson = { ...personToUpdate, number: newNumber };
+
+        personService
+          .update(personToUpdate.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => (person.id !== personToUpdate.id) ? person : returnedPerson));
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            alert(`There was a problem updating the contact.`);
+          });
+      }
     }
     else {
       const nameObject = {
@@ -132,7 +146,10 @@ const App = (props) => {
       />
       <h3>Numbers</h3>
       <Persons
-        persons={persons} filter={filter} handleDeleteContact={handleDeleteContact}
+        persons={persons}
+        filter={filter}
+        handleDeleteContact={handleDeleteContact}
+      //handleUpdate={handleUpdate}
       />
     </div>
   )
