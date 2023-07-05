@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
 import personService from './services/persons'
-import Notification from './components/Notification';
-import ErrorNotification from './components/ErrorNotification';
+import Notification from './components/notification';
+import ErrorNotification from './components/errorNotification';
 import './index.css'
 
 
