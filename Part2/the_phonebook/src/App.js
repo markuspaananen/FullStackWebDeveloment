@@ -2,6 +2,10 @@
 import { useState, useEffect } from 'react'
 import React from 'react'
 import personService from './services/persons'
+import Notification from './components/Notification';
+import ErrorNotification from './components/ErrorNotification';
+import './index.css'
+
 
 // Functions
 const Filter = (props) => {
@@ -58,6 +62,8 @@ const App = (props) => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [succsessMessage, setSuccsessMessage] = useState(null)
 
   // Event handlers
   useEffect(() => {
@@ -67,7 +73,7 @@ const App = (props) => {
         setPersons(initalPerson)
       })
   }, [])
-  
+
   const addName = (event) => {
     event.preventDefault()
     if (persons.find((person) => person.name === newName)) {
@@ -79,13 +85,31 @@ const App = (props) => {
           .update(personToUpdate.id, updatedPerson)
           .then(returnedPerson => {
             setPersons(persons.map(person => (person.id !== personToUpdate.id) ? person : returnedPerson));
+
+            setSuccsessMessage(
+              `Contact was updated successfully`
+            )
+
+            setTimeout(() => {
+              setSuccsessMessage(null)
+            }, 3000)
+            
             setNewName('')
             setNewNumber('')
           })
           .catch(error => {
-            alert(`There was a problem updating the contact.`);
+            
+            setErrorMessage(
+              `Contact was already removed from server`
+            )
+
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 3000)
+
           });
       }
+
     }
     else {
       const nameObject = {
@@ -98,6 +122,13 @@ const App = (props) => {
         .create(nameObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setSuccsessMessage(
+            `Contact was added successfully`
+          )
+
+          setTimeout(() => {
+            setSuccsessMessage(null)
+          }, 3000)
           setNewName('')
           setNewNumber('')
         })
@@ -110,11 +141,23 @@ const App = (props) => {
       .deletePerson(id)
       .then(() => {
         setPersons(persons.filter(person => person.id !== id));
+        setSuccsessMessage(
+          `Contact was deleted successfully`
+        )
+
+        setTimeout(() => {
+          setSuccsessMessage(null)
+        }, 3000)
       })
       .catch(error => {
-        alert(
-          `the Contact was already deleted from server`
+        setErrorMessage(
+          `Contact ${newName} was already removed from server`
         )
+
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+
         setPersons(persons.filter(n => n.id !== id))
       });
   }
@@ -133,6 +176,8 @@ const App = (props) => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notification message={succsessMessage} />
       <Filter
         filter={filter} handleFilterChange={handleFilterChange}
       />
@@ -145,6 +190,7 @@ const App = (props) => {
         newNumber={newNumber}
       />
       <h3>Numbers</h3>
+
       <Persons
         persons={persons}
         filter={filter}
