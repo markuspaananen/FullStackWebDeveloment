@@ -1,7 +1,7 @@
 // Import Statement
 import { useState, useEffect } from 'react'
 import React from 'react'
-import noteService from './services/persons'
+import personService from './services/persons'
 
 // Functions
 const Filter = (props) => {
@@ -14,6 +14,7 @@ const Filter = (props) => {
     </form>
   );
 };
+
 const PersonForm = (props) => {
   return (
     <form onSubmit={props.addName}>
@@ -35,7 +36,15 @@ const Persons = (props) => {
       {props.persons.filter((person) =>
         person && person.name && person.name.toLowerCase().includes(props.filter.toLowerCase()))
         .map((person) => (
-          <li key={person.id}>{person.name} {person.number}</li>
+          <li
+            key={person.id}>{person.name} {person.number}
+            <button onClick={() => {
+              if(window.confirm(`Delete ${person.name}`)){
+                props.handleDeleteContact(person.id)
+              }
+            }}
+              >Delete</button>
+          </li>
         ))}
     </ul>
   );
@@ -50,16 +59,15 @@ const App = (props) => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
 
-
-    useEffect(() => {
-      noteService
-        .getAll()
-        .then(response => {
-          setPersons(response.data)
-        })
-    }, [])
-
   // Event handlers
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(initalPerson => {
+        setPersons(initalPerson)
+      })
+  }, [])
+
   const addName = (event) => {
     event.preventDefault()
     if (persons.find((person) => person.name === newName)) {
@@ -72,15 +80,31 @@ const App = (props) => {
         id: persons.length + 1,
       }
 
-      noteService
+      personService
         .create(nameObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
         })
     }
   };
+
+  // use some other name for variable!
+  const handleDeleteContact = (id) => {
+    personService
+      .deletePerson(id)
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== id));
+      })
+      .catch(error => {
+        alert(
+          `the Contact was already deleted from server`
+        )
+        setPersons(persons.filter(n => n.id !== id))
+      });
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   };
@@ -108,7 +132,7 @@ const App = (props) => {
       />
       <h3>Numbers</h3>
       <Persons
-        persons={persons} filter={filter}
+        persons={persons} filter={filter} handleDeleteContact={handleDeleteContact}
       />
     </div>
   )
