@@ -1,36 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const Countries = ({ countries }) => {
+
+const CountryInfo = (props) => {
+  const country = props.country;
+  if (!country) {
+    return null;
+  }
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <p>Capital: {country.capital}</p>
+      <p>Area: {country.area}</p>
+      <ul>
+        {Object.values(country.languages).map((language, index) => (
+          <li key={index}>{language}</li>
+        ))}
+      </ul>
+      <img src={country.flags.png} alt={country.flags.alt} />
+    </div>
+  );
+};
+
+const Countries = (props, showCountry) => {
+  const countries = props.countries
   if (countries != null) {
     if (countries.length === 1) {
-      console.log('length is 1 and data is ', { countries });
-      return (
-        <div>
-          <h1>{countries[0].name.common}</h1>
-          <p>Capital: {countries[0].capital}</p>
-          <p>Area: {countries[0].area}</p>
-
-          <ul>
-            {Object.values(countries[0].languages).map(language => (
-              <li key={language}>{language}</li>
-            ))}
-          </ul>
-
-          <img src={countries[0].flags.png} alt={countries[0].flags.alt} />
-
-
-        </div>
-      );
+        return <CountryInfo country={countries[0]} />;
     }
+
+    console.log(`Inside countries, `, { countries });
+
+    console.log({showCountry});
+
     if (countries.length <= 10) {
       return (
         <div>
-          <ul>
-            {countries.map(country => (
-              <li key={country.name.common}>{country.name.common}</li>
-            ))}
-          </ul>
+          <div>
+            <ul>
+              {countries.map(country => (
+                <li key={country.name.common}>{country.name.common}<button onClick={() =>
+                  props.handleShowCountry(country)}>Show</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+
+          </div>
         </div>
       );
     }
@@ -44,9 +61,10 @@ const Countries = ({ countries }) => {
   }
 };
 
-const App = () => {
+const App = (props) => {
   const [countries, setCountries] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCountry, setShowCountry] = useState(null);
 
   useEffect(() => {
     axios
@@ -60,9 +78,12 @@ const App = () => {
       });
   }, []);
 
-  const searchCountry = event => {
-
+  const handleCountrySearch = event => {
     setSearchTerm(event.target.value);
+  };
+  const handleShowCountry = (country) => {
+    setShowCountry(country);
+    console.log('inside handle', { country });
   };
 
   const filteredCountries = countries
@@ -74,10 +95,12 @@ const App = () => {
     <div>
       <div>
         <form>
-          <input type="text" onChange={searchCountry} />
+          Find countries :
+          <input type="text" onChange={handleCountrySearch} />
         </form>
       </div>
-      <Countries countries={filteredCountries} />
+      <Countries countries={filteredCountries} handleShowCountry={handleShowCountry} />
+      <CountryInfo country={showCountry} />
     </div>
   );
 };
