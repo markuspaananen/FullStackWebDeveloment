@@ -22,7 +22,7 @@ const CountryInfo = (props) => {
   );
 };
 
-const Countries = (props, showCountry) => {
+const Countries = (props) => {
   const countries = props.countries
   if (countries != null) {
     if (countries.length === 1) {
@@ -31,7 +31,7 @@ const Countries = (props, showCountry) => {
 
     console.log(`Inside countries, `, { countries });
 
-    console.log({showCountry});
+    //console.log({showCountry} );
 
     if (countries.length <= 10) {
       return (
@@ -46,7 +46,7 @@ const Countries = (props, showCountry) => {
             </ul>
           </div>
           <div>
-
+            <CountryInfo country={props.showCountry}/>
           </div>
         </div>
       );
@@ -61,7 +61,7 @@ const Countries = (props, showCountry) => {
   }
 };
 
-const App = (props) => {
+const App = () => {
   const [countries, setCountries] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCountry, setShowCountry] = useState(null);
@@ -99,8 +99,8 @@ const App = (props) => {
           <input type="text" onChange={handleCountrySearch} />
         </form>
       </div>
-      <Countries countries={filteredCountries} handleShowCountry={handleShowCountry} />
-      <CountryInfo country={showCountry} />
+      <Countries countries={filteredCountries} handleShowCountry={handleShowCountry} showCountry={showCountry} />
+
     </div>
   );
 };
